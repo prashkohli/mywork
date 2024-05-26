@@ -1,0 +1,112 @@
+input
+/* 
+4 
+5
+0 1
+1 2
+0 2
+1 3
+1 4
+0
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct queue {
+    int data;
+    struct queue *next;
+};
+
+struct queue *front = NULL;
+struct queue *rear = NULL;
+
+void push(int data) {
+    struct queue* newnode = (struct queue*)malloc(sizeof(struct queue));
+    newnode->data = data;
+    newnode->next = NULL;
+
+    if (rear == NULL) {
+        front = rear = newnode;
+    } else {
+        rear->next = newnode;
+        rear = newnode;
+    }
+}
+
+int pop() {
+    if (front == NULL) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    int t = front->data;
+    struct queue *tmp = front;
+    front = front->next;
+    if (front == NULL) {
+        rear = NULL;
+    }
+    free(tmp);
+    return t;
+}
+
+void bfsMatrix(int g[][100], int v) {
+    int vis[v], st;
+    int u;
+
+    for (int i = 0; i < v; i++) {
+        vis[i] = 0;
+    }
+
+    printf("Enter start : ");
+    scanf("%d", &st);
+    vis[st] = 1;
+    push(st);
+
+    while (front != NULL) {
+        u = pop();
+        printf("%d  ", u);
+
+        for (int i = 0; i < v; i++) {
+            if (g[u][i] == 1 && vis[i] == 0) {
+                push(i);
+                vis[i] = 1;
+            }
+        }
+    }
+}
+
+
+int main() {
+    int edges, vertices;
+    int end_ver, start_ver;
+
+    printf("Enter the no of vertices : ");
+    scanf("%d", &vertices);
+
+    int a[100][100];
+
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            a[i][j] = 0;
+        }
+    }
+
+    printf("Enter the no of edges : ");
+    scanf("%d", &edges);
+
+    for (int i = 0; i < edges; i++) {
+        printf("Enter start and end vertex : ");
+        scanf("%d %d", &start_ver, &end_ver);
+        a[start_ver][end_ver] = a[end_ver][start_ver] = 1;
+    }
+
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            printf("%d\t", a[i][j]);
+        }
+        printf("\n");
+    }
+    bfsMatrix(a, vertices);
+
+    return 0;
+}
