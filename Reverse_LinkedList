@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int value;
+    struct ListNode *next;
+};
+
+struct ListNode* reverse(struct ListNode* head) {
+    struct ListNode *prev = NULL;
+    struct ListNode *current = head;
+    struct ListNode *next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+struct ListNode* createNode(int value) {
+    struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct ListNode* createList(int arr[], int size) {
+    if (size == 0) return NULL;
+    struct ListNode* head = createNode(arr[0]);
+    struct ListNode* current = head;
+    for (int i = 1; i < size; i++) {
+        current->next = createNode(arr[i]);
+        current = current->next;
+    }
+    return head;
+}
+
+void printList(struct ListNode* head) {
+    struct ListNode* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    struct ListNode* head = createList(arr, size);
+    printf("Original list:\n");
+    printList(head);
+
+    head = reverse(head);
+    printf("Reversed list:\n");
+    printList(head);
+
+    struct ListNode* current = head;
+    while (current != NULL) {
+        struct ListNode* next = current->next;
+        free(current);
+        current = next;
+    }
+
+    return 0;
+}
