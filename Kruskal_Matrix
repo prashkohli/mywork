@@ -1,0 +1,94 @@
+#include<stdio.h>
+
+// Function prototype
+int findP(int a);
+
+int par[100];
+
+void uni(int a, int b)
+{
+    int i = findP(a);
+    int j = findP(b);
+    par[j] = i;
+}
+
+int findP(int a)
+{
+    while(a!=par[a])
+    {
+        a=par[a];
+    }
+    return a;
+}
+
+void kruskals(int m[][100], int v) {
+    int a,b,n=1;
+    for(int i=0;i<v;i++)
+    {
+        par[i] = i;
+    }
+
+    int min;
+    while(n<v)
+    {
+        min=99;
+        for(int i=0;i<v;i++)
+        {
+            for(int j=0;j<v;j++)
+            {
+                if(m[i][j]<min && findP(i)!=findP(j))
+                {
+                    a = i;
+                    b = j;
+                    min = m[i][j];
+                } 
+            }
+        }
+        uni(a,b);
+        printf("%d-%d-->%d\n",a,b,min);
+        n++;
+    }
+}
+
+int main() {
+
+    int v;
+    printf("Enter the no of vertices : ");
+    scanf("%d",&v);
+    int a[100][100];
+    for(int i=0;i<v;i++)
+    {
+        for(int j=0;j<v;j++)
+        {
+            a[i][j]=99;
+        }
+       
+    }
+    int e,st,en;
+    int w;
+    printf("Enter the no of edges : ");
+    scanf("%d",&e);
+    for(int i=0;i<e;i++)
+    {
+        printf("Enter the start and end : ");
+        scanf("%d %d",&st,&en);
+        printf("Enter weight : ");
+        scanf("%d",&w);
+
+        a[st][en] = a[en][st] = w;
+    }
+
+    for(int i=0;i<v;i++)
+    {
+        for(int j=0;j<v;j++)
+        {
+            printf("%d ",a[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n\n");
+    kruskals(a,v);
+
+    return 0;
+}
