@@ -1,0 +1,140 @@
+/*
+Enter the no of vertices : 4
+Enter the no of neighbours of 0 : 2
+Enter the neighbour : 1
+Enter the weight : 5
+Enter the neighbour : 2
+Enter the weight : 10
+Enter the no of neighbours of 1 : 2
+Enter the neighbour : 0
+Enter the weight : 5
+Enter the neighbour : 3
+Enter the weight : 6
+Enter the no of neighbours of 2 : 2
+Enter the neighbour : 0
+Enter the weight : 10
+Enter the neighbour : 3
+Enter the weight : 4
+Enter the no of neighbours of 3 : 2
+Enter the neighbour : 1
+Enter the weight : 6
+Enter the neighbour : 2
+Enter the weight : 4
+*/
+#include<stdio.h>
+#include<stdlib.h>
+int par[100];
+struct node {
+    int data;
+    int weight;
+    struct node *next;
+
+};
+
+int findP(int a)
+{
+    while(a!=par[a])
+    {
+        a = par[a];
+    }
+    return a;
+}
+void uni(int a, int b)
+{
+   int i = findP(a);
+   int  j= findP(b);
+   par[j] = i;
+}
+void kruskals(struct node *A[100],int v)
+{
+   int a,b,min,n=1;
+   for(int i=0;i<v;i++)
+   {
+      par[i] = i;
+
+   }
+   struct node *temp;
+   while(n<v)
+   {
+       min = 99;
+       for(int i=0;i<v;i++)
+       {
+            temp=A[i];
+            while(temp!=NULL)
+            {
+                if(temp->weight<min && findP(i) != findP(temp->data))
+                {
+                    a = i;
+                    b = temp->data;
+                    min = temp->weight;
+                }
+                temp = temp->next;
+            }
+       }
+       uni(a,b);
+       printf("%d-%d-->%d\n",a,b,min);
+       n++;
+   }
+}
+
+
+int main()
+{
+    int v;
+    printf("Enter the no of vertices : ");
+    scanf("%d",&v);
+    struct node *A[100];
+
+    for(int i=0;i<v;i++)
+    {
+        A[i] = NULL;
+    }
+
+    struct node *temp=NULL;
+    int edges;
+    int neigh;
+    int weight;
+
+    for(int i=0;i<v;i++)
+    {
+        printf("Enter the no of neighbours of %d : ",i);
+        scanf("%d",&edges);
+        for(int j=0;j<edges;j++)
+        {
+            printf("Enter the neighbour : ");
+            scanf("%d",&neigh);
+            printf("Enter the weight : ");
+            scanf("%d",&weight);
+            struct node* newnode = (struct node*)malloc(sizeof(struct node));
+            newnode->data = neigh;
+            newnode->weight = weight;
+            newnode->next=NULL;
+            if(A[i]==NULL)
+            {
+                A[i] = newnode;
+            }
+            else
+            {
+                temp->next = newnode;
+            }
+            temp = newnode;
+
+        }
+    }
+
+    for(int i=0;i<v;i++)
+    {
+        temp=A[i];
+        printf("%d",i);
+        while(temp!=NULL)
+        {
+            printf("->%d",temp->data);
+            temp=temp->next;
+        }
+        printf("\n");
+    }
+
+    printf("\n");
+    printf("\n");
+    kruskals(A,v);
+}
