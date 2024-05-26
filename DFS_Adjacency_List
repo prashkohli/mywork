@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent an adjacency list node
+struct AdjListNode {
+    int dest;
+    struct AdjListNode* next;
+};
+
+// Structure to represent an adjacency list
+struct AdjList {
+    struct AdjListNode* head;
+};
+
+// Structure to represent a graph. A graph is an array of adjacency lists.
+// Size of the array will be the number of vertices in the graph
+struct Graph {
+    int vertices;
+    struct AdjList* array;
+};
+
+// Function to create a new adjacency list node
+struct AdjListNode* newAdjListNode(int dest) {
+    struct AdjListNode* newNode = (struct AdjListNode*)malloc(sizeof(struct AdjListNode));
+    newNode->dest = dest;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to create a graph of given vertices
+struct Graph* createGraph(int vertices) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->vertices = vertices;
+
+    // Create an array of adjacency lists. Size of array will be vertices
+    graph->array = (struct AdjList*)malloc(vertices * sizeof(struct AdjList));
+
+    // Initialize each adjacency list as empty by making head as NULL
+    for (int i = 0; i < vertices; ++i)
+        graph->array[i].head = NULL;
+
+    return graph;
+}
+
+// Function to add an edge to an undirected graph
+void addEdge(struct Graph* graph, int src, int dest) {
+    // Add an edge from src to dest. A new node is added to the adjacency list of src.
+    struct AdjListNode* newNode = newAdjListNode(dest);
+    newNode->next = graph->array[src].head;
+    graph->array[src].head = newNode;
+
+    // Since graph is undirected, add an edge from dest to src also
+    newNode = newAdjListNode(src);
+    newNode->next = graph->array[dest].head;
+    graph->array[dest].head = newNode;
+}
+
+// Function to print the adjacency list representation of graph
+void printGraph(struct Graph* graph) {
+    for (int v = 0; v < graph->vertices; ++v) {
+        struct AdjListNode* pCrawl = graph->array[v].head;
+        printf("\n Adjacency list of vertex %d\n head ", v);
+        while (pCrawl) {
+            printf("-> %d", pCrawl->dest);
+            pCrawl = pCrawl->next;
+        }
+        printf("\n");
+    }
+}
+
+// Function to perform DFS traversal from a given vertex
+void DFSUtil(int v, int visited[], struct Graph* graph) {
+    visited[v] = 1;
+    printf("%d ", v);
+
+    struct AdjListNode* adjList = graph->array[v].head;
+    while (adjList) {
+        int connectedVertex = adjList->dest;
+        if (!visited[connectedVertex]) {
+            DFSUtil(connectedVertex, visited, graph);
+        }
+        adjList = adjList->next;
+    }
+}
+
+// Function to perform DFS traversal from a given start vertex
+void DFS(struct Graph* graph, int startVertex) {
+    int visited = (int)malloc(graph->vertices * sizeof(int));
+    for (int i = 0; i < graph->vertices; i++)
+        visited[i] = 0;
+
+    DFSUtil(startVertex, visited, graph);
+
+    free(visited);
+}
+
+int main() {
+    int vertices, edges, src, dest, startVertex;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
+
+    struct Graph* graph = createGraph(vertices);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    for (int i = 0; i < edges; ++i) {
+        printf("Enter edge (source destination): ");
+        scanf("%d %d", &src, &dest);
+        addEdge(graph, src, dest);
+    }
+
+    printGraph(graph);
+
+    printf("Enter the starting vertex for DFS: ");
+    scanf("%d", &startVertex);
+
+    printf("DFS Traversal starting from vertex %d: ", startVertex);
+    DFS(graph, startVertex);
+
+    return 0;
+}
