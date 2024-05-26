@@ -1,0 +1,135 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node{
+    int coef;
+    int expo;
+    struct node* next;
+};
+
+struct node* add(struct node* poly1, struct node* poly2)
+{
+    struct node* head3 = NULL;
+    struct node* poly3 = NULL;
+
+    while (poly1 != NULL && poly2 != NULL)
+    {
+        if (head3 == NULL)
+        {
+            head3 = poly3 = (struct node*)malloc(sizeof(struct node));
+            poly3->next = NULL;
+        }
+        else
+        {
+            poly3->next = (struct node*)malloc(sizeof(struct node));
+            poly3 = poly3->next;
+            poly3->next = NULL;
+        }
+
+        if (poly1->expo == poly2->expo)
+        {
+            poly3->coef = poly1->coef + poly2->coef;
+            poly3->expo = poly1->expo;
+            poly1 = poly1->next;
+            poly2 = poly2->next;
+        }
+        else if (poly1->expo > poly2->expo)
+        {
+            poly3->coef = poly1->coef;
+            poly3->expo = poly1->expo;
+            poly1 = poly1->next;
+        }
+        else
+        {
+            poly3->coef = poly2->coef;
+            poly3->expo = poly2->expo;
+            poly2 = poly2->next;
+        }
+    }
+
+    if (poly1 == NULL && poly2 != NULL)
+    {
+        while (poly2 != NULL)
+        {
+            poly3->next = (struct node*)malloc(sizeof(struct node));
+            poly3 = poly3->next;
+            poly3->coef = poly2->coef;
+            poly3->expo = poly2->expo;
+            poly2 = poly2->next;
+            poly3->next = NULL;
+        }
+    }
+
+    if (poly2 == NULL && poly1 != NULL)
+    {
+        while (poly1 != NULL)
+        {
+            poly3->next = (struct node*)malloc(sizeof(struct node));
+            poly3 = poly3->next;
+            poly3->coef = poly1->coef;
+            poly3->expo = poly1->expo;
+            poly1 = poly1->next;
+            poly3->next = NULL;
+        }
+    }
+
+    return head3;
+}
+
+struct node* Accept_poly(int n)
+{
+    struct node* head = NULL;
+    struct node* p = NULL;
+
+    head = p = (struct node*)malloc(sizeof(struct node));
+    p->next = NULL;
+
+    printf("Enter the coefficient and exponent\n");
+    scanf("%d %d", &p->coef, &p->expo);
+	int i;
+    for (i = 1; i < n; i++)
+    {
+        p->next = (struct node*)malloc(sizeof(struct node));
+        p = p->next;
+        p->next = NULL;
+        printf("Enter the coefficient and exponent\n");
+  scanf("%d %d", &p->coef, &p->expo);
+    }
+
+    return head;
+}
+
+void display(struct node* head)
+{
+    struct node* temp = head;
+
+    while (temp != NULL)
+    {
+        printf("%d x^%d +", temp->coef, temp->expo);
+        temp = temp->next;
+    }
+    printf("0");
+}
+
+int main()
+{
+    struct node* poly1 = NULL;
+    struct node* poly2 = NULL;
+    struct node* poly3 = NULL;
+    int n1, n2;
+
+    printf("Enter the number of terms for first and then second polynomial:\n");
+    scanf("%d %d", &n1, &n2);
+
+    poly1 = Accept_poly(n1);
+    poly2 = Accept_poly(n2);
+    poly3 = add(poly1, poly2);
+     
+    display(poly1);
+    printf("\n"); 
+    display(poly2);
+    printf("\nResultant Polynomial: ");
+    display(poly3);
+
+    return 0;
+}
