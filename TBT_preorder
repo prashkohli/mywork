@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct tbtNode {
+    int data;
+    struct tbtNode *left;
+    struct tbtNode *right;
+    int lbit;
+    int rbit;
+};
+
+struct tbtNode *root = NULL;
+struct tbtNode *head;
+
+void insert(struct tbtNode* root, struct tbtNode *temp) {
+    if (root->data > temp->data) {
+        if (root->lbit == 0) {  
+            temp->left = root->left;
+            temp->right = root;
+            root->left = temp;
+            root->lbit = 1;
+        } else {
+            insert(root->left, temp);
+        }
+    } else if (root->data < temp->data) {
+        if (root->rbit == 0) {  
+            temp->right = root->right;
+            temp->left = root;
+            root->right = temp;
+            root->rbit = 1;
+        } else {
+            insert(root->right, temp);
+        }
+    }
+}
+
+void preorder(struct tbtNode *root)
+ {
+    while(root!=head)
+     {
+         printf("%d ",root->data);
+         if(root->lbit==1)
+         {
+             root = root->left;
+         }
+         else if(root->rbit==0)
+         {
+             while(root->rbit==0)
+             {  root = root->right; }
+            root = root->right;
+
+         }
+         else if(root->rbit==1)
+         {
+            root = root->right;
+         }
+     }
+}
+
+
+int main() {
+    char ch;
+    do {
+        struct tbtNode temp = (struct tbtNode)malloc(sizeof(struct tbtNode));
+        printf("Enter the data of node: ");
+        int data;
+        scanf("%d", &data);
+        temp->data = data;
+        temp->left = NULL;
+        temp->lbit = 0;
+        temp->right = NULL;
+        temp->rbit = 0;
+
+        if (root == NULL) {
+            root = temp;
+            head = (struct tbtNode*)malloc(sizeof(struct tbtNode));
+            head->data = 999;
+            head->left = root;
+            head->lbit = 1;
+            head->right = head;
+            head->rbit = 1;
+
+            root->left = head;
+            root->right = head;
+        } else {
+            insert(root, temp);
+        }
+        printf("If you want to continue: Y/y ");
+        scanf(" %c", &ch);  
+    } while (ch == 'y' || ch == 'Y');
+
+	preorder(root);
+	
+    return 0;
+}
