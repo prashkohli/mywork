@@ -1,0 +1,48 @@
+#include<stdio.h>
+
+#define MAX 10
+int stack[MAX];
+int top=-1;
+
+void push(int data){
+	if(top==-1){
+		stack[0]=data;
+		top=0;
+	}
+	else if(top==MAX-1){
+		printf("The stack is full");
+	}
+	else{
+		stack[top+1]=data;
+		top++;
+	}
+}
+
+int pop(){
+	int p;
+	if(top==-1){
+		printf("The stack is empty.");
+		return -1;
+	}
+	else{
+		p=stack[top];
+		//stack[top]=0;
+		top--;
+	}
+	return p;
+}
+
+
+int main(){
+	push(5);
+	push(18);
+	push(3);
+	push(2);
+	push(1);
+	
+	printf("%d",pop());
+	printf("%d",pop());
+	printf("%d",pop());
+	printf("%d",pop());
+	printf("%d",pop());
+}
