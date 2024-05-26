@@ -1,73 +1,73 @@
-// Infix to Postfix
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
+#define MAX 100
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<ctype.h>
+char stack[MAX], infix[MAX], postfix[MAX];
+int top = -1;
 
-char stack[100],infix[100],postfix[100];
-int top =-1;
-
-int prece(char ch)
-{
-    if(ch=='+' || ch=='-')
-    {
+int precedence(char ch) {
+    if (ch == '+' || ch == '-') {
         return 1;
     }
-    if(ch=='*' || ch=='/')
-    {
+    if (ch == '*' || ch == '/') {
         return 2;
     }
     return 0;
 }
 
+void push(char ch) {
+    if (top >= MAX - 1) {
+        printf("Stack overflow\n");
+        return;
+    }
+    stack[++top] = ch;
+}
+
 char pop() {
+    if (top < 0) {
+        printf("Stack underflow\n");
+        return -1;
+    }
     return stack[top--];
 }
-void infixTopostfix() {
-    int ch;
-    int j=-1;
-    for(int i=0;i<strlen(infix);i++)
-    {
-        ch = infix[i];
-        if(isalnum(ch))
-        {
-            postfix[++j] = ch;
-        }
-        else if(ch == '+' || ch =='-' || ch=='/' || ch=='*')
-        {
-            while(top>-1 && prece(ch) <= prece(stack[top]))
-            {
-                postfix[++j] =pop();
-            }
-            stack[++top] = ch;
-        }
-        else if(ch=='(')
-        {
-            stack[++top] = ch;
-        }
-        else if(ch==')')
-        {
-            while(stack[top]!='(')
-            {
-                postfix[++j] =pop();
-            }
-            pop();
-        }
-    }
-    while(top>-1)
-    {
-        postfix[++j] =pop();
-    }
 
+void infixToPostfix() {
+    int j = 0;
+    for (int i = 0; i < strlen(infix); i++) {
+        char ch = infix[i];
+        if (isalnum(ch)) {
+            postfix[j++] = ch;
+        } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+            while (top > -1 && precedence(ch) <= precedence(stack[top])) {
+                postfix[j++] = pop();
+            }
+            push(ch);
+        } else if (ch == '(') {
+            push(ch);
+        } else if (ch == ')') {
+            while (top > -1 && stack[top] != '(') {
+                postfix[j++] = pop();
+            }
+            pop();  // Pop the '('
+        }
+    }
+    while (top > -1) {
+        postfix[j++] = pop();
+    }
+    postfix[j] = '\0';  // Null terminate the postfix expression
 }
-int main() {
 
-    
-    printf("Enter infix expression : ");
-    gets(infix);
-    infixTopostfix() ;
-    printf("%s",postfix);
-    
+int main() {
+    printf("Enter infix expression: ");
+    if (fgets(infix, MAX, stdin) != NULL) {
+        infix[strcspn(infix, "\n")] = '\0';  // Remove newline character
+        infixToPostfix();
+        printf("Postfix expression: %s\n", postfix);
+    } else {
+        printf("Error reading input\n");
+    }
+    return 0;
 }
