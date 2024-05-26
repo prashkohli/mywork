@@ -1,0 +1,73 @@
+// Infix to Postfix
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<ctype.h>
+
+char stack[100],infix[100],postfix[100];
+int top =-1;
+
+int prece(char ch)
+{
+    if(ch=='+' || ch=='-')
+    {
+        return 1;
+    }
+    if(ch=='*' || ch=='/')
+    {
+        return 2;
+    }
+    return 0;
+}
+
+char pop() {
+    return stack[top--];
+}
+void infixTopostfix() {
+    int ch;
+    int j=-1;
+    for(int i=0;i<strlen(infix);i++)
+    {
+        ch = infix[i];
+        if(isalnum(ch))
+        {
+            postfix[++j] = ch;
+        }
+        else if(ch == '+' || ch =='-' || ch=='/' || ch=='*')
+        {
+            while(top>-1 && prece(ch) <= prece(stack[top]))
+            {
+                postfix[++j] =pop();
+            }
+            stack[++top] = ch;
+        }
+        else if(ch=='(')
+        {
+            stack[++top] = ch;
+        }
+        else if(ch==')')
+        {
+            while(stack[top]!='(')
+            {
+                postfix[++j] =pop();
+            }
+            pop();
+        }
+    }
+    while(top>-1)
+    {
+        postfix[++j] =pop();
+    }
+
+}
+int main() {
+
+    
+    printf("Enter infix expression : ");
+    gets(infix);
+    infixTopostfix() ;
+    printf("%s",postfix);
+    
+}
