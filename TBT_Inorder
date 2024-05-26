@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct tbtNode {
+    int data;
+    struct tbtNode *left;
+    struct tbtNode *right;
+    int lbit;
+    int rbit;
+};
+
+struct tbtNode *root = NULL;
+
+void insert(struct tbtNode* root, struct tbtNode *temp) {
+    if (root->data > temp->data) {
+        if (root->lbit == 0) {  
+            temp->left = root->left;
+            temp->right = root;
+            root->left = temp;
+            root->lbit = 1;
+        } else {
+            insert(root->left, temp);
+        }
+    } else if (root->data < temp->data) {
+        if (root->rbit == 0) {  
+            temp->right = root->right;
+            temp->left = root;
+            root->right = temp;
+            root->rbit = 1;
+        } else {
+            insert(root->right, temp);
+        }
+    }
+}
+
+void inorder(struct tbtNode *head) {
+    struct tbtNode *t = head->left;  
+    while (t != head) {
+        while (t->lbit == 1) {
+            t = t->left;
+        }
+        printf("%d ", t->data);
+        
+        while (t->rbit == 0) {
+            t = t->right;
+            if (t == head) return;
+            printf("%d ", t->data);
+        }
+        t = t->right;
+    }
+}
+
+
+int main() {
+    char ch;
+    struct tbtNode *head;
+    do {
+        struct tbtNode temp = (struct tbtNode)malloc(sizeof(struct tbtNode));
+        printf("Enter the data of node: ");
+        int data;
+        scanf("%d", &data);
+        temp->data = data;
+        temp->left = NULL;
+        temp->lbit = 0;
+        temp->right = NULL;
+        temp->rbit = 0;
+
+        if (root == NULL) {
+            root = temp;
+            head = (struct tbtNode*)malloc(sizeof(struct tbtNode));
+            head->data = 999;
+            head->left = root;
+            head->lbit = 1;
+            head->right = head;
+            head->rbit = 1;
+
+            root->left = head;
+            root->right = head;
+        } else {
+            insert(root, temp);
+        }
+        printf("If you want to continue: Y/y ");
+        scanf(" %c", &ch);  
+    } while (ch == 'y' || ch == 'Y');
+
+	inorder(head);
+
+    return 0;
+}
