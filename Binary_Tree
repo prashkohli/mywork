@@ -1,0 +1,253 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_NODES 100
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function for non-recursive preorder traversal
+void preorderTraversal(struct Node* root) {
+    if (root == NULL) return;
+
+    struct Node* stack[MAX_NODES];
+    int top = -1;
+    stack[++top] = root;
+
+    while (top >= 0) {
+        struct Node* current = stack[top--];
+        printf("%d ", current->data);
+
+        if (current->right) stack[++top] = current->right;
+        if (current->left) stack[++top] = current->left;
+    }
+}
+
+// Function for non-recursive inorder traversal
+void inorderTraversal(struct Node* root) {
+    if (root == NULL) return;
+
+    struct Node* stack[MAX_NODES];
+    int top = -1;
+    struct Node* current = root;
+
+    while (current != NULL || top >= 0) {
+        while (current != NULL) {
+            stack[++top] = current;
+            current = current->left;
+        }
+
+        current = stack[top--];
+        printf("%d ", current->data);
+        current = current->right;
+    }
+}
+
+// Function for non-recursive postorder traversal
+void postorderTraversal(struct Node* root) {
+    if (root == NULL) return;
+
+    struct Node* stack1[MAX_NODES];
+    struct Node* stack2[MAX_NODES];
+    int top1 = -1;
+    int top2 = -1;
+    stack1[++top1] = root;
+
+    while (top1 >= 0) {
+        struct Node* current = stack1[top1--];
+        stack2[++top2] = current;
+
+        if (current->left) stack1[++top1] = current->left;
+        if (current->right) stack1[++top1] = current->right;
+    }
+
+    while (top2 >= 0) {
+        struct Node* current = stack2[top2--];
+        printf("%d ", current->data);
+    }
+}
+
+// Function to count leaf nodes in a binary tree non-recursively
+int countLeafNodes(struct Node* root) {
+    if (root == NULL) return 0;
+
+    int leafCount = 0;
+    struct Node* stack[MAX_NODES];
+    int top = -1;
+    stack[++top] = root;
+
+    while (top >= 0) {
+        struct Node* current = stack[top--];
+        if (current->left == NULL && current->right == NULL) leafCount++;
+
+        if (current->right) stack[++top] = current->right;
+        if (current->left) stack[++top] = current->left;
+    }
+
+    return leafCount;
+}
+
+// Function to count total number of nodes in a binary tree non-recursively
+int countTotalNodes(struct Node* root) {
+    if (root == NULL) return 0;
+
+    int totalCount = 0;
+    struct Node* stack[MAX_NODES];
+    int top = -1;
+    stack[++top] = root;
+
+    while (top >= 0) {
+        struct Node* current = stack[top--];
+        totalCount++;
+
+        if (current->right) stack[++top] = current->right;
+        if (current->left) stack[++top] = current->left;
+    }
+
+    return totalCount;
+}
+
+// Function to calculate the height of a binary tree non-recursively
+int treeHeight(struct Node* root) {
+    if (root == NULL) return 0;
+
+    int height = 0;
+    struct Node* stack[MAX_NODES];
+    int top = -1;
+    stack[++top] = root;
+    int levelNodes = 1;
+
+    while (top >= 0) {
+        if (levelNodes == 0) {
+            levelNodes = top + 1;
+            height++;
+        }
+
+        struct Node* current = stack[top--];
+        levelNodes--;
+
+        if (current->right) stack[++top] = current->right;
+        if (current->left) stack[++top] = current->left;
+    }
+
+    return height;
+}
+
+// Function to mirror the binary tree
+void mirrorTree(struct Node* root) {
+    if (root == NULL) return;
+
+    struct Node* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+
+    mirrorTree(root->left);
+    mirrorTree(root->right);
+}
+
+// Function to display leaf nodes
+void displayLeafNodes(struct Node* root) {
+    if (root == NULL) return;
+
+    if (root->left == NULL && root->right == NULL) {
+        printf("%d ", root->data);
+        return;
+    }
+
+    displayLeafNodes(root->left);
+    displayLeafNodes(root->right);
+}
+
+// Function for level-wise traversal
+void levelWiseTraversal(struct Node* root) {
+    if (root == NULL) return;
+
+    struct Node* queue[MAX_NODES];
+    int front = 0;
+    int rear = 0;
+    queue[rear++] = root;
+
+    while (front < rear) {
+        struct Node* current = queue[front++];
+        printf("%d ", current->data);
+
+        if (current->left) queue[rear++] = current->left;
+        if (current->right) queue[rear++] = current->right;
+    }
+}
+
+int main() {
+    struct Node* root = NULL;
+    int numNodes, data;
+
+    printf("Enter the number of nodes in the binary tree: ");
+    scanf("%d", &numNodes);
+
+    for (int i = 0; i < numNodes; i++) {
+        printf("Enter data for node %d:\n ", i + 1);
+        scanf("%d", &data);
+        
+        if (root == NULL) {
+            root = createNode(data);
+        } else {
+            struct Node* current = root;
+            struct Node* parent = NULL;
+
+            while (current != NULL) {
+                parent = current;
+                if (data < current->data)
+                    current = current->left;
+                else
+                    current = current->right;
+            }
+
+            if (data < parent->data)
+                parent->left = createNode(data);
+            else
+                parent->right = createNode(data);
+        }
+    }
+
+    printf("Preorder Traversal: ");
+    preorderTraversal(root);
+    printf("\n");
+
+    printf("Inorder Traversal: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    printf("Postorder Traversal: ");
+    postorderTraversal(root);
+    printf("\n");
+
+    printf("Level-wise Traversal: ");
+    levelWiseTraversal(root);
+    printf("\n");
+
+    printf("Leaf nodes: ");
+    displayLeafNodes(root);
+    printf("\n");
+
+    mirrorTree(root);
+
+    printf("Mirrored Tree Preorder Traversal: ");
+    preorderTraversal(root);
+    printf("\n");
+
+    printf("Total number of nodes: %d\n", countTotalNodes(root));
+    printf("Leaf nodes count: %d\n", countLeafNodes(root));
+    printf("Height of the tree: %d\n", treeHeight(root));
+
+    return 0;
+}
