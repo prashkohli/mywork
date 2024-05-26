@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* insertAtStart(Node* head, int data) {
+    Node* newNode = createNode(data);
+    if (head != NULL) {
+        head->prev = newNode;
+        newNode->next = head;
+    }
+    return newNode;
+}
+
+void displayList(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+Node* mergeSortedLists(Node* head1, Node* head2) {
+    if (head1 == NULL) return head2;
+    if (head2 == NULL) return head1;
+
+    Node* mergedHead = NULL;
+    if (head1->data <= head2->data) {
+        mergedHead = head1;
+        head1 = head1->next;
+    } else {
+        mergedHead = head2;
+        head2 = head2->next;
+    }
+
+    Node* mergedTail = mergedHead;
+    while (head1 != NULL && head2 != NULL) {
+        if (head1->data <= head2->data) {
+            mergedTail->next = head1;
+            head1->prev = mergedTail;
+            head1 = head1->next;
+        } else {
+            mergedTail->next = head2;
+            head2->prev = mergedTail;
+            head2 = head2->next;
+        }
+        mergedTail = mergedTail->next;
+    }
+
+    if (head1 != NULL) {
+        mergedTail->next = head1;
+        head1->prev = mergedTail;
+    }
+
+    if (head2 != NULL) {
+        mergedTail->next = head2;
+        head2->prev = mergedTail;
+    }
+
+    return mergedHead;
+}
+
+int main() {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+
+    list1 = insertAtStart(list1, 7);
+    list1 = insertAtStart(list1, 5);
+    list1 = insertAtStart(list1, 3);
+    list1 = insertAtStart(list1, 1);
+
+    list2 = insertAtStart(list2, 8);
+    list2 = insertAtStart(list2, 6);
+    list2 = insertAtStart(list2, 4);
+    list2 = insertAtStart(list2, 2);
+
+    printf("List 1: ");
+    displayList(list1);
+
+    printf("List 2: ");
+    displayList(list2);
+
+    Node* mergedList = mergeSortedLists(list1, list2);
+
+    printf("Merged List: ");
+    displayList(mergedList);
+
+    return 0;
+}
